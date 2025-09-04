@@ -65,9 +65,9 @@ A web-based system for managing **student exchange programs and scholarship appl
   ### 3. Configure DB Connection
   - Inside public/ folder, locate connect.sample.php
   - Copy and rename to connect.php:
-  ```bash
+    ```bash
     cp public/connect.sample.php public/connect.php
-  ```
+    ```
   - Open public/connect.php and update with your actual MySQL credentials.
     ```bash
     new mysqli(
