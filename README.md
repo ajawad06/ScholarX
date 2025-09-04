@@ -34,9 +34,10 @@ A web-based system for managing **student exchange programs and scholarship appl
   - Add/Edit students and instructors
   - Add programs and scholarships 
   - View students/instructors/program lists
+    
 ---
 
-## 🌟 Advanced Database Features
+## 🌟 Database Objects
 
 - **Triggers**
   - Logs student insertions and enforces GPA ≤ 4.0 automatically
@@ -46,6 +47,8 @@ A web-based system for managing **student exchange programs and scholarship appl
 
 - **Stored Procedures**
   - Streamlines approval of exchange and scholarship applications with automatic status updates
+
+---
 
 ## ⚙️ Setup Instructions  
 
