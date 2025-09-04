@@ -30,10 +30,10 @@ A web-based system for managing **student exchange programs and scholarship appl
   - Views students' applications and approves/rejects.
 
 - **Admin**
-  - **Admin Panel** to manage the whole system
+  - Full authority over system data through **Admin Panel**
   - Add/Edit students and instructors
   - Add programs and scholarships 
-  - View students/instructors lists
+  - View students/instructors/program lists
 
 ---
 
