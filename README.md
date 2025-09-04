@@ -12,7 +12,7 @@ A web-based system for managing **student exchange programs and scholarship appl
 
 ---
 
-## ✨ Features
+## 🚀 Features
 - **Authentication & Roles**
   - Student, Instructor, and Admin logins
   - Secure logout & session handling
@@ -34,10 +34,20 @@ A web-based system for managing **student exchange programs and scholarship appl
   - Add/Edit students and instructors
   - Add programs and scholarships 
   - View students/instructors/program lists
-
 ---
 
-## 🚀 Setup Instructions  
+## 🌟 Advanced Database Features
+
+# Triggers
+# - Logs student insertions and enforces GPA ≤ 4.0 automatically
+
+# Views
+# - Provides simplified access to exchange and scholarship application data
+
+# Stored Procedures
+# - Streamlines approval of exchange and scholarship applications with automatic status updates
+
+## ⚙️ Setup Instructions  
 
 ### 1. Clone the Repository  
 ```bash
