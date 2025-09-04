@@ -1,0 +1,7 @@
+# PhpStorm project files
+.idea/
+
+# Database connection file (use sample instead)
+public/connect.php
+
+
