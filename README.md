@@ -38,14 +38,14 @@ A web-based system for managing **student exchange programs and scholarship appl
 
 ## 🌟 Advanced Database Features
 
-# Triggers
-# - Logs student insertions and enforces GPA ≤ 4.0 automatically
+- **Triggers**
+  - Logs student insertions and enforces GPA ≤ 4.0 automatically
 
-# Views
-# - Provides simplified access to exchange and scholarship application data
+- **Views**
+  - Provides simplified access to exchange and scholarship application data
 
-# Stored Procedures
-# - Streamlines approval of exchange and scholarship applications with automatic status updates
+- **Stored Procedures**
+  - Streamlines approval of exchange and scholarship applications with automatic status updates
 
 ## ⚙️ Setup Instructions  
 
