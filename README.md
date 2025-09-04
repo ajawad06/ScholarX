@@ -1,4 +1,4 @@
-# 🎓 Student Exchange & Scholarship Application System  
+# 🎓 ScholarX  
 
 A web-based system for managing **student exchange programs and scholarship applications and approvals**.  
 
