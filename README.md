@@ -12,6 +12,31 @@ A web-based system for managing **student exchange programs and scholarship appl
 
 ---
 
+## ✨ Features
+- **Authentication & Roles**
+  - Student, Instructor, and Admin logins
+  - Secure logout & session handling
+  - Password hashing support
+
+- **Student**
+  - Register & log in
+  - Browse **Program Catalog**
+  - Apply to **Exchange** and **Scholarship** programs
+  - Upload required documents/photos
+  - View **dashboard** & track application status
+
+- **Instructor**
+  - Log in to **Instructor Dashboard**
+  - Views students' applications and approves/rejects.
+
+- **Admin**
+  - **Admin Panel** to manage the whole system
+  - Add/Edit students and instructors
+  - Add programs and scholarships 
+  - View students/instructors lists
+
+---
+
 ## 🚀 Setup Instructions  
 
 ### 1. Clone the Repository  
