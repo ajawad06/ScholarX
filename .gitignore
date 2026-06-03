@@ -1,7 +1,13 @@
 # PhpStorm project files
 .idea/
 
-# Database connection file (use sample instead)
-public/connect.php
+# Dependencies and build output
+node_modules/
+client/dist/
+
+# Local environment
+.env
+server/.env
+*.log
 
 
