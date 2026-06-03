@@ -67,12 +67,6 @@ export function Layout() {
           )}
         </nav>
       </header>
-                <LogOut size={18} /> Logout
-              </button>
-            </>
-          )}
-        </nav>
-      </header>
       <main>
         <Outlet />
       </main>

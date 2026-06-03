@@ -5,6 +5,7 @@ A modern platform for managing student exchange programs and scholarship applica
 ---
 
 ## 🚀 Tech Stack
+
 - **Frontend:** React + Vite (client-side)
 - **Backend:** Node.js + Express (server-side)
 - **Database:** MongoDB + Mongoose (models implemented)
@@ -13,6 +14,7 @@ A modern platform for managing student exchange programs and scholarship applica
 ---
 
 ## 🛠️ Features
+
 - **Unified Login System**
   - Role-based access for Students, Instructors, and Admins via a single portal.
   - Secure session management.
@@ -37,13 +39,17 @@ A modern platform for managing student exchange programs and scholarship applica
 ## 🏃 Run Locally
 
 ### 1. Install Dependencies
+
 Run from the root directory:
+
 ```bash
 npm install
 ```
 
 ### 2. Start Services
+
 Run both frontend and backend concurrently:
+
 ```bash
 npm run dev
 ```
@@ -53,7 +59,8 @@ npm run dev
 
 ---
 
-##  Demo Logins
+## Demo Logins
+
 - Student: `student@nust.edu.pk` / `student123`
 - Instructor: `naeem.zafar@nust.edu.pk` / `instructor123`
 - Admin: `admin@nust.edu.pk` / `admin123`

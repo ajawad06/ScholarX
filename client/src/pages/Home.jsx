@@ -26,17 +26,13 @@ export function Home() {
             Portal Login <ArrowRight size={18} />
           </Link>
         </div>
-      </div>
-      <div className="role-grid" aria-label="Portal sections">
-        <Link to="/login">
-          <GraduationCap /> Student Portal
-        </Link>
-        <Link to="/login">
-          <UserRoundCheck /> Instructor Portal
-        </Link>
-        <Link to="/login">
-          <Settings /> Admin Panel
-        </Link>
+        <div className="hero-artwork-inline">
+          <img
+            src="/uploads/world-map.png"
+            alt="Global Exchange Map"
+            className="hero-img"
+          />
+        </div>
       </div>
     </section>
   );
