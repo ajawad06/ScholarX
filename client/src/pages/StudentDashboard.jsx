@@ -1,6 +1,7 @@
 import { FilePlus2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { api } from '../api.js';
+import { AuthMedia } from '../components/AuthMedia.jsx';
 import { DataTable } from '../components/DataTable.jsx';
 import { useAsync } from '../hooks/useAsync.js';
 
@@ -28,7 +29,11 @@ export function StudentDashboard() {
             boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
           }}>
             {data.student.profilePic ? (
-              <img src={data.student.profilePic} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <AuthMedia
+                path={data.student.profilePic}
+                alt="Profile"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
             ) : (
               <span style={{ fontSize: '28px', fontWeight: '700', color: '#475569' }}>
                 {data.student.name.charAt(0).toUpperCase()}

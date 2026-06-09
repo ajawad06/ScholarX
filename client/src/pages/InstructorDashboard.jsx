@@ -1,5 +1,7 @@
 import { ClipboardList } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { api } from '../api.js';
+import { AuthMedia } from '../components/AuthMedia.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export function InstructorDashboard() {
@@ -23,7 +25,11 @@ export function InstructorDashboard() {
             boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
           }}>
             {user?.profilePic ? (
-              <img src={user.profilePic} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <AuthMedia
+                path={user.profilePic}
+                alt="Profile"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
             ) : (
               <span style={{ fontSize: '28px', fontWeight: '700', color: '#475569' }}>
                 {user?.name?.charAt(0).toUpperCase() || 'I'}

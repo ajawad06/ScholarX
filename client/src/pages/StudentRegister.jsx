@@ -1,8 +1,7 @@
 import { Save } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api.js";
-import { useAsync } from "../hooks/useAsync.js";
 
 const emptyForm = {
   name: "",
@@ -16,23 +15,9 @@ const emptyForm = {
 };
 
 export function StudentRegister() {
-  const {
-    data,
-    loading,
-    error: loadError,
-  } = useAsync(() => api("/catalog"), []);
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (data && data.universities && data.universities.length > 0) {
-      setForm((prev) => ({
-        ...prev,
-        universityId: String(data.universities[0].id),
-      }));
-    }
-  }, [data]);
 
   async function submit(event) {
     event.preventDefault();
@@ -103,24 +88,6 @@ export function StudentRegister() {
             onChange={(e) => setForm({ ...form, contact: e.target.value })}
             required
           />
-        </label>
-        <label>
-          University
-          <select
-            value={form.universityId}
-            onChange={(e) => setForm({ ...form, universityId: e.target.value })}
-            required
-          >
-            {loading ? (
-              <option>Loading universities...</option>
-            ) : (
-              data?.universities.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.name}
-                </option>
-              ))
-            )}
-          </select>
         </label>
         <label>
           GPA

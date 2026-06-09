@@ -60,26 +60,8 @@ export const db = {
       profilePic: null
     }
   ],
-  exchangeApplications: [
-    {
-      id: 1,
-      studentId: 1,
-      programId: 1,
-      status: 'Pending',
-      applicationDate: '2025-04-01',
-      approvalDate: null
-    }
-  ],
-  scholarshipApplications: [
-    {
-      id: 1,
-      studentId: 1,
-      scholarshipId: 1,
-      status: 'Pending',
-      applicationDate: '2025-04-02',
-      approvalDate: null
-    }
-  ]
+  exchangeApplications: [],
+  scholarshipApplications: []
 };
 
 export function nextId(collection) {

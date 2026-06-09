@@ -1,10 +1,8 @@
 import bcrypt from "bcryptjs";
 import { Counter } from "../models/Counter.js";
-import { ExchangeApplication } from "../models/ExchangeApplication.js";
 import { Instructor } from "../models/Instructor.js";
 import { Program } from "../models/Program.js";
 import { Scholarship } from "../models/Scholarship.js";
-import { ScholarshipApplication } from "../models/ScholarshipApplication.js";
 import { Student } from "../models/Student.js";
 import { University } from "../models/University.js";
 import { Admin } from "../models/Admin.js";
@@ -374,43 +372,4 @@ export async function seedDatabase() {
     );
   }
 
-  const exchangeAppCount = await ExchangeApplication.countDocuments();
-  if (exchangeAppCount === 0) {
-    await ExchangeApplication.create({
-      id: 1,
-      studentId: 1,
-      programId: 1,
-      status: "Pending",
-      applicationDate: "2025-04-01",
-      approvalDate: null,
-      studentIdCard: "/uploads/mock-id.pdf",
-      personalStatement: "/uploads/mock-ps.pdf",
-      transcript: "/uploads/mock-transcript.pdf",
-      recommendationLetter: "/uploads/mock-rec.pdf",
-    });
-    await Counter.updateOne(
-      { name: "exchangeApplications" },
-      { $setOnInsert: { value: 1 } },
-      { upsert: true },
-    );
-  }
-
-  const scholarshipAppCount = await ScholarshipApplication.countDocuments();
-  if (scholarshipAppCount === 0) {
-    await ScholarshipApplication.create({
-      id: 1,
-      studentId: 1,
-      scholarshipId: 1,
-      status: "Pending",
-      applicationDate: "2025-04-02",
-      approvalDate: null,
-      studentIdCard: "/uploads/mock-id.pdf",
-      transcript: "/uploads/mock-transcript.pdf",
-    });
-    await Counter.updateOne(
-      { name: "scholarshipApplications" },
-      { $setOnInsert: { value: 1 } },
-      { upsert: true },
-    );
-  }
 }

@@ -10,4 +10,6 @@ client/dist/
 server/.env
 *.log
 
+# Private uploaded files
+server/storage/
 

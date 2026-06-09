@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
 import { Router } from "express";
 import { requireAuth } from "../middleware/auth.js";
-import { upload } from "../middleware/upload.js";
+import { applicationUpload, profileUpload } from "../middleware/upload.js";
+import { saveApplicationDocuments } from "../utils/storage.js";
 import { Student } from "../models/Student.js";
 import { Program } from "../models/Program.js";
 import { Scholarship } from "../models/Scholarship.js";
@@ -33,7 +34,7 @@ studentRouter.post(
       dob: req.body.dob,
       nationality: req.body.nationality,
       contact: req.body.contact,
-      universityId: Number(req.body.universityId),
+      universityId: 1, // Fixed to NUST (id: 1)
       gpa: Number(req.body.gpa),
       password: await bcrypt.hash(req.body.password || "", 10),
       profilePic: null,
@@ -93,7 +94,7 @@ studentRouter.get(
 studentRouter.post(
   "/me/exchange-applications",
   requireAuth("student"),
-  upload.fields([
+  applicationUpload.fields([
     { name: "studentIdCard", maxCount: 1 },
     { name: "personalStatement", maxCount: 1 },
     { name: "transcript", maxCount: 1 },
@@ -118,6 +119,7 @@ studentRouter.post(
 
     const appId = await getNextSequenceValue("exchangeApplications");
     const today = new Date().toISOString().slice(0, 10);
+    const documents = saveApplicationDocuments("exchange", appId, req.files);
 
     const application = await ExchangeApplication.create({
       id: appId,
@@ -126,10 +128,7 @@ studentRouter.post(
       status: "Pending",
       applicationDate: today,
       approvalDate: null,
-      studentIdCard: `/uploads/${req.files.studentIdCard[0].filename}`,
-      personalStatement: `/uploads/${req.files.personalStatement[0].filename}`,
-      transcript: `/uploads/${req.files.transcript[0].filename}`,
-      recommendationLetter: `/uploads/${req.files.recommendationLetter[0].filename}`,
+      ...documents,
     });
 
     res.status(201).json({ application });
@@ -139,7 +138,7 @@ studentRouter.post(
 studentRouter.post(
   "/me/scholarship-applications",
   requireAuth("student"),
-  upload.fields([
+  applicationUpload.fields([
     { name: "studentIdCard", maxCount: 1 },
     { name: "transcript", maxCount: 1 },
   ]),
@@ -158,6 +157,7 @@ studentRouter.post(
 
     const appId = await getNextSequenceValue("scholarshipApplications");
     const today = new Date().toISOString().slice(0, 10);
+    const documents = saveApplicationDocuments("scholarship", appId, req.files);
 
     const application = await ScholarshipApplication.create({
       id: appId,
@@ -166,8 +166,7 @@ studentRouter.post(
       status: "Pending",
       applicationDate: today,
       approvalDate: null,
-      studentIdCard: `/uploads/${req.files.studentIdCard[0].filename}`,
-      transcript: `/uploads/${req.files.transcript[0].filename}`,
+      ...documents,
     });
 
     res.status(201).json({ application });
@@ -177,7 +176,7 @@ studentRouter.post(
 studentRouter.post(
   "/me/profile-pic",
   requireAuth("student"),
-  upload.single("profilePic"),
+  profileUpload.single("profilePic"),
   asyncRoute(async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded." });
@@ -186,7 +185,7 @@ studentRouter.post(
     if (!student)
       return res.status(404).json({ message: "Student not found." });
 
-    student.profilePic = `/uploads/${req.file.filename}`;
+    student.profilePic = `profiles/${req.file.filename}`;
     await student.save();
 
     res.json({

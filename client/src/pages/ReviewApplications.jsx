@@ -1,8 +1,95 @@
 import { Check, Search, X } from "lucide-react";
 import { useState } from "react";
-import { api } from "../api.js";
+import { api, openApplicationDocument } from "../api.js";
 import { DataTable } from "../components/DataTable.jsx";
 import { useAsync } from "../hooks/useAsync.js";
+
+function DocumentButton({ label, type, id, field }) {
+  return (
+    <button
+      type="button"
+      className="button ghost"
+      style={{
+        fontSize: "11px",
+        padding: "4px 8px",
+        minHeight: "auto",
+        display: "inline-flex",
+        width: "fit-content",
+      }}
+      onClick={async () => {
+        try {
+          await openApplicationDocument(type, id, field);
+        } catch (err) {
+          alert(`Could not open document: ${err.message}`);
+        }
+      }}
+    >
+      {label}
+    </button>
+  );
+}
+
+function exchangeDocuments(row) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+      {row.studentIdCard && (
+        <DocumentButton
+          label="ID Card"
+          type="exchange"
+          id={row.id}
+          field="studentIdCard"
+        />
+      )}
+      {row.personalStatement && (
+        <DocumentButton
+          label="Statement"
+          type="exchange"
+          id={row.id}
+          field="personalStatement"
+        />
+      )}
+      {row.transcript && (
+        <DocumentButton
+          label="Transcript"
+          type="exchange"
+          id={row.id}
+          field="transcript"
+        />
+      )}
+      {row.recommendationLetter && (
+        <DocumentButton
+          label="Rec Letter"
+          type="exchange"
+          id={row.id}
+          field="recommendationLetter"
+        />
+      )}
+    </div>
+  );
+}
+
+function scholarshipDocuments(row) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+      {row.studentIdCard && (
+        <DocumentButton
+          label="ID Card"
+          type="scholarship"
+          id={row.id}
+          field="studentIdCard"
+        />
+      )}
+      {row.transcript && (
+        <DocumentButton
+          label="Transcript"
+          type="scholarship"
+          id={row.id}
+          field="transcript"
+        />
+      )}
+    </div>
+  );
+}
 
 export function ReviewApplications() {
   const [search, setSearch] = useState("");
@@ -12,18 +99,22 @@ export function ReviewApplications() {
   );
 
   async function act(type, id, action) {
-    await api(`/instructors/applications/${type}/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify({ action }),
-    });
-    setData((current) => ({
-      exchangeApplications: current.exchangeApplications.filter(
-        (item) => !(type === "exchange" && item.id === id),
-      ),
-      scholarshipApplications: current.scholarshipApplications.filter(
-        (item) => !(type === "scholarship" && item.id === id),
-      ),
-    }));
+    try {
+      await api(`/instructors/applications/${type}/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ action }),
+      });
+      setData((current) => ({
+        exchangeApplications: current.exchangeApplications.filter(
+          (item) => !(type === "exchange" && item.id === id),
+        ),
+        scholarshipApplications: current.scholarshipApplications.filter(
+          (item) => !(type === "scholarship" && item.id === id),
+        ),
+      }));
+    } catch (err) {
+      alert(`Action failed: ${err.message}`);
+    }
   }
 
   const actionColumn = (type) => ({
@@ -80,80 +171,7 @@ export function ReviewApplications() {
           {
             key: "documents",
             label: "Documents",
-            render: (row) => (
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: "4px" }}
-              >
-                {row.studentIdCard && (
-                  <a
-                    href={row.studentIdCard}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="button ghost"
-                    style={{
-                      fontSize: "11px",
-                      padding: "4px 8px",
-                      minHeight: "auto",
-                      display: "inline-flex",
-                      width: "fit-content",
-                    }}
-                  >
-                    ID Card
-                  </a>
-                )}
-                {row.personalStatement && (
-                  <a
-                    href={row.personalStatement}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="button ghost"
-                    style={{
-                      fontSize: "11px",
-                      padding: "4px 8px",
-                      minHeight: "auto",
-                      display: "inline-flex",
-                      width: "fit-content",
-                    }}
-                  >
-                    Statement
-                  </a>
-                )}
-                {row.transcript && (
-                  <a
-                    href={row.transcript}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="button ghost"
-                    style={{
-                      fontSize: "11px",
-                      padding: "4px 8px",
-                      minHeight: "auto",
-                      display: "inline-flex",
-                      width: "fit-content",
-                    }}
-                  >
-                    Transcript
-                  </a>
-                )}
-                {row.recommendationLetter && (
-                  <a
-                    href={row.recommendationLetter}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="button ghost"
-                    style={{
-                      fontSize: "11px",
-                      padding: "4px 8px",
-                      minHeight: "auto",
-                      display: "inline-flex",
-                      width: "fit-content",
-                    }}
-                  >
-                    Rec Letter
-                  </a>
-                )}
-              </div>
-            ),
+            render: exchangeDocuments,
           },
           {
             key: "status",
@@ -179,46 +197,7 @@ export function ReviewApplications() {
           {
             key: "documents",
             label: "Documents",
-            render: (row) => (
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: "4px" }}
-              >
-                {row.studentIdCard && (
-                  <a
-                    href={row.studentIdCard}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="button ghost"
-                    style={{
-                      fontSize: "11px",
-                      padding: "4px 8px",
-                      minHeight: "auto",
-                      display: "inline-flex",
-                      width: "fit-content",
-                    }}
-                  >
-                    ID Card
-                  </a>
-                )}
-                {row.transcript && (
-                  <a
-                    href={row.transcript}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="button ghost"
-                    style={{
-                      fontSize: "11px",
-                      padding: "4px 8px",
-                      minHeight: "auto",
-                      display: "inline-flex",
-                      width: "fit-content",
-                    }}
-                  >
-                    Transcript
-                  </a>
-                )}
-              </div>
-            ),
+            render: scholarshipDocuments,
           },
           {
             key: "status",

@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import { apiRouter } from './routes/index.js';
 import { connectDatabase } from './db/connect.js';
 import { seedDatabase } from './db/seed.js';
+import { ensureStorageDirs } from './utils/storage.js';
 import { errorHandler, notFound } from './middleware/errors.js';
 
 dotenv.config();
@@ -26,6 +27,7 @@ app.use(notFound);
 app.use(errorHandler);
 
 async function startServer() {
+  ensureStorageDirs();
   await connectDatabase();
   await seedDatabase();
 

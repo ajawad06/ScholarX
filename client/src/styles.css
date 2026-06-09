@@ -280,6 +280,13 @@ h2 {
   color: var(--danger);
 }
 
+.split {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
 .page,
 .auth-page {
   margin: 0 auto;
@@ -290,6 +297,10 @@ h2 {
 .page.narrow,
 .auth-page {
   max-width: 580px;
+}
+
+.page.medium {
+  max-width: 800px;
 }
 
 .page-heading,

@@ -1,5 +1,6 @@
-import { Send } from "lucide-react";
+import { ArrowLeft, Send } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "../api.js";
 import { useAsync } from "../hooks/useAsync.js";
 
@@ -10,6 +11,7 @@ export function ApplicationForm({
   optionLabel,
   onSubmit,
 }) {
+  const navigate = useNavigate();
   const { data, error, loading } = useAsync(async () => {
     const [catalog, dashboard] = await Promise.all([
       api("/catalog"),
@@ -66,32 +68,59 @@ export function ApplicationForm({
   }
 
   return (
-    <section className="page narrow">
+    <section className="page medium">
       <form className="form-card" onSubmit={submit}>
-        <h1>{title}</h1>
+        <div className="split" style={{ alignItems: "center" }}>
+          <div>
+            <p className="eyebrow">Application Form</p>
+            <h1>{title}</h1>
+          </div>
+          <button
+            type="button"
+            className="button ghost"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft size={18} /> Back
+          </button>
+        </div>
+
         {submitError && <p className="alert error">{submitError}</p>}
-        <label>
-          Name
-          <input value={student.name} readOnly />
-        </label>
-        <label>
-          Email
-          <input value={student.email} readOnly />
-        </label>
-        <label>
-          Date of Birth
-          <input type="date" value={student.dob || ""} readOnly />
-        </label>
-        <label>
-          Nationality
-          <input value={student.nationality || ""} readOnly />
-        </label>
-        <label>
-          Contact
-          <input value={student.contact || ""} readOnly />
-        </label>
-        <label>
-          Select Option
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "20px",
+            background: "#f8fafc",
+            padding: "24px",
+            borderRadius: "14px",
+            border: "1px solid #e2e8f0",
+          }}
+        >
+          <label>
+            Full Name
+            <input value={student.name} readOnly />
+          </label>
+          <label>
+            Email Address
+            <input value={student.email} readOnly />
+          </label>
+          <label>
+            Date of Birth
+            <input type="date" value={student.dob || ""} readOnly />
+          </label>
+          <label>
+            Nationality
+            <input value={student.nationality || ""} readOnly />
+          </label>
+          <label style={{ gridColumn: "span 2" }}>
+            Contact Number
+            <input value={student.contact || ""} readOnly />
+          </label>
+        </div>
+
+        <label style={{ marginTop: "10px" }}>
+          Select Opportunity
           <select
             name={selectName}
             value={value}
@@ -105,49 +134,61 @@ export function ApplicationForm({
             ))}
           </select>
         </label>
-        <label>
-          Student ID Card (PDF/PNG/JPG/JPEG)
-          <input
-            type="file"
-            accept=".pdf,image/*"
-            onChange={(e) => setStudentIdCard(e.target.files[0])}
-            required
-          />
-        </label>
-        <label>
-          Transcript (PDF/PNG/JPG/JPEG)
-          <input
-            type="file"
-            accept=".pdf,image/*"
-            onChange={(e) => setTranscript(e.target.files[0])}
-            required
-          />
-        </label>
-        {itemKey === "programs" && (
-          <>
-            <label>
-              Personal Statement (PDF/PNG/JPG/JPEG)
-              <input
-                type="file"
-                accept=".pdf,image/*"
-                onChange={(e) => setPersonalStatement(e.target.files[0])}
-                required
-              />
-            </label>
-            <label>
-              Recommendation Letter (PDF/PNG/JPG/JPEG)
-              <input
-                type="file"
-                accept=".pdf,image/*"
-                onChange={(e) => setRecommendationLetter(e.target.files[0])}
-                required
-              />
-            </label>
-          </>
-        )}
-        <button className="button primary" type="submit">
-          <Send size={18} /> Submit Application
-        </button>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "20px",
+          }}
+        >
+          <label>
+            Student ID Card (PDF/Image)
+            <input
+              type="file"
+              accept=".pdf,image/*"
+              onChange={(e) => setStudentIdCard(e.target.files[0])}
+              required
+            />
+          </label>
+          <label>
+            Latest Transcript (PDF/Image)
+            <input
+              type="file"
+              accept=".pdf,image/*"
+              onChange={(e) => setTranscript(e.target.files[0])}
+              required
+            />
+          </label>
+          {itemKey === "programs" && (
+            <>
+              <label>
+                Personal Statement (PDF/Image)
+                <input
+                  type="file"
+                  accept=".pdf,image/*"
+                  onChange={(e) => setPersonalStatement(e.target.files[0])}
+                  required
+                />
+              </label>
+              <label>
+                Recommendation Letter (PDF/Image)
+                <input
+                  type="file"
+                  accept=".pdf,image/*"
+                  onChange={(e) => setRecommendationLetter(e.target.files[0])}
+                  required
+                />
+              </label>
+            </>
+          )}
+        </div>
+
+        <div className="toolbar" style={{ marginTop: "10px" }}>
+          <button className="button primary" type="submit">
+            <Send size={18} /> Submit Application
+          </button>
+        </div>
       </form>
     </section>
   );
