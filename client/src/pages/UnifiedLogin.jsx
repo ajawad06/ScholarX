@@ -17,6 +17,8 @@ export function UnifiedLogin() {
       await auth.login(role, form);
       if (role === "admin") {
         navigate("/admin");
+      } else if (role === "instructor") {
+        navigate("/instructor/applications");
       } else {
         navigate(`/${role}/dashboard`);
       }

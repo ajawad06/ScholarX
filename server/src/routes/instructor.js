@@ -175,6 +175,26 @@ instructorRouter.patch(
   }),
 );
 
+instructorRouter.patch(
+  "/me",
+  requireAuth("instructor"),
+  asyncRoute(async (req, res) => {
+    const instructor = await Instructor.findOne({ id: req.user.id });
+    if (!instructor)
+      return res.status(404).json({ message: "Instructor not found." });
+
+    const allowedUpdates = ["fname", "mname", "lname", "contact", "department"];
+    allowedUpdates.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        instructor[field] = req.body[field];
+      }
+    });
+
+    await instructor.save();
+    res.json({ instructor: formatPublicInstructor(instructor) });
+  }),
+);
+
 instructorRouter.post(
   "/me/profile-pic",
   requireAuth("instructor"),

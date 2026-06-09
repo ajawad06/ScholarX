@@ -43,7 +43,7 @@ export function AdminPanel() {
     password: "",
     contact: "",
     department: "",
-    universityId: "",
+    universityId: "1",
   });
   const [newUniv, setNewUniv] = useState({
     name: "",
@@ -279,9 +279,7 @@ export function AdminPanel() {
             e.preventDefault();
             const payload = {
               ...instructor,
-              universityId:
-                instructor.universityId ||
-                String(data.universities[0]?.id || ""),
+              universityId: "1", // Fixed to NUST
             };
             create("/admin/instructors", payload, () =>
               setInstructor({
@@ -292,7 +290,7 @@ export function AdminPanel() {
                 password: "",
                 contact: "",
                 department: "",
-                universityId: "",
+                universityId: "1",
               }),
             );
           }}
@@ -355,22 +353,6 @@ export function AdminPanel() {
             }
             required
           />
-          <label style={{ fontSize: "13px", fontWeight: "600" }}>
-            University
-            <select
-              value={instructor.universityId}
-              onChange={(e) =>
-                setInstructor({ ...instructor, universityId: e.target.value })
-              }
-              required
-            >
-              {data.universities.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.name}
-                </option>
-              ))}
-            </select>
-          </label>
           <button className="button primary" type="submit">
             <Plus size={18} /> Add Instructor
           </button>
@@ -427,7 +409,7 @@ export function AdminPanel() {
         rows={data.scholarships}
         columns={[
           { key: "name", label: "Name" },
-          { key: "amount", label: "Amount" },
+          { key: "amount", label: "Amount ($)" },
           { key: "deadline", label: "Deadline" },
           {
             key: "action",

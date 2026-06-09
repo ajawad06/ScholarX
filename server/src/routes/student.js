@@ -173,6 +173,27 @@ studentRouter.post(
   }),
 );
 
+studentRouter.patch(
+  "/me",
+  requireAuth("student"),
+  asyncRoute(async (req, res) => {
+    const student = await Student.findOne({ id: req.user.id });
+    if (!student)
+      return res.status(404).json({ message: "Student not found." });
+
+    const allowedUpdates = ["name", "dob", "nationality", "contact", "gpa"];
+    allowedUpdates.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        student[field] = req.body[field];
+      }
+    });
+
+    await student.save();
+    const formatted = await formatPublicStudent(student);
+    res.json({ student: formatted });
+  }),
+);
+
 studentRouter.post(
   "/me/profile-pic",
   requireAuth("student"),

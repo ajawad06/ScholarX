@@ -136,7 +136,7 @@ adminRouter.post(
     const id = await getNextSequenceValue("instructors");
     const instructor = await Instructor.create({
       id,
-      universityId: Number(req.body.universityId),
+      universityId: 1, // Fixed to NUST (id: 1)
       fname: req.body.fname,
       mname: req.body.mname,
       lname: req.body.lname,
@@ -165,11 +165,9 @@ adminRouter.post(
       const matches = await response.json();
 
       if (!matches || matches.length === 0) {
-        return res
-          .status(400)
-          .json({
-            message: `University "${name}" could not be verified. Please check spelling.`,
-          });
+        return res.status(400).json({
+          message: `University "${name}" could not be verified. Please check spelling.`,
+        });
       }
 
       const bestMatch = matches[0];
@@ -183,11 +181,9 @@ adminRouter.post(
         },
       });
       if (existing) {
-        return res
-          .status(409)
-          .json({
-            message: `University "${bestMatch.name}" is already registered.`,
-          });
+        return res.status(409).json({
+          message: `University "${bestMatch.name}" is already registered.`,
+        });
       }
 
       const id = await getNextSequenceValue("universities");
