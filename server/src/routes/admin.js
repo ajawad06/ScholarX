@@ -150,6 +150,14 @@ adminRouter.post(
   }),
 );
 
+adminRouter.delete(
+  "/instructors/:id",
+  asyncRoute(async (req, res) => {
+    await Instructor.deleteOne({ id: Number(req.params.id) });
+    res.status(204).end();
+  }),
+);
+
 adminRouter.post(
   "/universities",
   asyncRoute(async (req, res) => {
