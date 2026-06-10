@@ -73,8 +73,10 @@ export function AdminPanel() {
   return (
     <section className="page">
       <div className="page-heading">
-        <p className="eyebrow">Admin</p>
-        <h1>Manage ScholarX Records</h1>
+        <div>
+          <p className="eyebrow">Admin</p>
+          <h1>Manage ScholarX Records</h1>
+        </div>
       </div>
       <div className="admin-grid">
         <form
