@@ -32,29 +32,11 @@ export function UnifiedLogin() {
       <form className="form-card compact" onSubmit={submit}>
         <h1 style={{ marginBottom: "8px" }}>Portal Login</h1>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "16px",
-            marginBottom: "24px",
-            padding: "8px",
-            backgroundColor: "#f1f5f9",
-            borderRadius: "8px",
-          }}
-        >
+        <div className="role-switch">
           {["student", "instructor", "admin"].map((r) => (
             <label
               key={r}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-                cursor: "pointer",
-                fontSize: "14px",
-                fontWeight: role === r ? "700" : "500",
-                color: role === r ? "var(--primary)" : "#64748b",
-              }}
+              className={`role-option ${role === r ? "active" : ""}`}
             >
               <input
                 type="radio"
@@ -62,9 +44,8 @@ export function UnifiedLogin() {
                 value={r}
                 checked={role === r}
                 onChange={(e) => setRole(e.target.value)}
-                style={{ cursor: "pointer" }}
               />
-              {r.charAt(0).toUpperCase() + r.slice(1)}
+              {r}
             </label>
           ))}
         </div>

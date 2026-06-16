@@ -1,5 +1,5 @@
 import { Check, Search, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api, openApplicationDocument } from "../api.js";
 import { DataTable } from "../components/DataTable.jsx";
 import { useAsync } from "../hooks/useAsync.js";
@@ -93,9 +93,18 @@ function scholarshipDocuments(row) {
 
 export function ReviewApplications() {
   const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
+
+  // Debounce: only run the search a short moment after typing stops,
+  // instead of firing a request on every keystroke.
+  useEffect(() => {
+    const handle = setTimeout(() => setQuery(search), 350);
+    return () => clearTimeout(handle);
+  }, [search]);
+
   const { data, error, loading, setData } = useAsync(
-    () => api(`/instructors/applications?search=${encodeURIComponent(search)}`),
-    [search],
+    () => api(`/instructors/applications?search=${encodeURIComponent(query)}`),
+    [query],
   );
 
   async function act(type, id, action) {
@@ -140,8 +149,11 @@ export function ReviewApplications() {
     ),
   });
 
-  if (loading) return <p className="page-status">Loading applications...</p>;
-  if (error) return <p className="alert error">{error}</p>;
+  // Only take over the whole page on the very first load. Once we have data,
+  // keep the page (and the search box) mounted so typing never loses focus.
+  if (loading && !data)
+    return <p className="page-status">Loading applications...</p>;
+  if (error && !data) return <p className="alert error">{error}</p>;
 
   return (
     <section className="page">

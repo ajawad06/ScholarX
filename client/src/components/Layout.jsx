@@ -1,11 +1,11 @@
 import {
+  ClipboardList,
   GraduationCap,
   Home,
   LibraryBig,
   LogOut,
   Settings,
   User,
-  UserRoundCheck,
 } from "lucide-react";
 import { Link, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -41,8 +41,8 @@ export function Layout() {
                 </Link>
               )}
               {auth.role === "instructor" && (
-                <Link to="/instructor/dashboard">
-                  <UserRoundCheck size={18} /> Dashboard
+                <Link to="/instructor/applications">
+                  <ClipboardList size={18} /> Applications
                 </Link>
               )}
               {auth.role === "admin" && (
@@ -70,6 +70,20 @@ export function Layout() {
       <main>
         <Outlet />
       </main>
+      <footer className="site-footer">
+        <div className="footer-inner">
+          <div className="footer-brand">
+            <span>ScholarX</span>
+            <p className="footer-tagline">Exchange &amp; scholarship portal</p>
+          </div>
+          <p className="footer-meta">
+            © {new Date().getFullYear()} NUST ·{" "}
+            <a href="https://nust.edu.pk" target="_blank" rel="noreferrer">
+              nust.edu.pk
+            </a>
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
