@@ -409,74 +409,6 @@ export function AdminPanel() {
           </button>
         </form>
       </div>
-      <h2>Existing Universities</h2>
-      <DataTable
-        rows={data.universities}
-        columns={[
-          { key: "id", label: "ID" },
-          { key: "name", label: "Name" },
-          { key: "city", label: "City" },
-          { key: "country", label: "Country" },
-          {
-            key: "address",
-            label: "Website",
-            render: (row) => (
-              <a
-                href={row.address}
-                target="_blank"
-                rel="noreferrer"
-                style={{ color: "var(--primary)", textDecoration: "underline" }}
-              >
-                {row.address}
-              </a>
-            ),
-          },
-        ]}
-      />
-      <h2>Existing Exchange Programs</h2>
-      <DataTable
-        rows={data.programs}
-        columns={[
-          { key: "name", label: "Name" },
-          { key: "duration", label: "Duration" },
-          { key: "universityId", label: "University" },
-          {
-            key: "action",
-            label: "Action",
-            render: (row) => (
-              <button
-                className="mini reject"
-                type="button"
-                onClick={() => remove(`/admin/programs/${row.id}`)}
-              >
-                <Trash2 size={16} /> Delete
-              </button>
-            ),
-          },
-        ]}
-      />
-      <h2>Existing Scholarships</h2>
-      <DataTable
-        rows={data.scholarships}
-        columns={[
-          { key: "name", label: "Name" },
-          { key: "amount", label: "Amount ($)" },
-          { key: "deadline", label: "Deadline" },
-          {
-            key: "action",
-            label: "Action",
-            render: (row) => (
-              <button
-                className="mini reject"
-                type="button"
-                onClick={() => remove(`/admin/scholarships/${row.id}`)}
-              >
-                <Trash2 size={16} /> Delete
-              </button>
-            ),
-          },
-        ]}
-      />
       <h2>Student Records</h2>
       <DataTable
         rows={data.students}
@@ -525,6 +457,30 @@ export function AdminPanel() {
               >
                 <Trash2 size={16} /> Delete
               </button>
+            ),
+          },
+        ]}
+      />
+      <h2>Existing Universities</h2>
+      <DataTable
+        rows={data.universities}
+        columns={[
+          { key: "id", label: "ID" },
+          { key: "name", label: "Name" },
+          { key: "city", label: "City" },
+          { key: "country", label: "Country" },
+          {
+            key: "address",
+            label: "Website",
+            render: (row) => (
+              <a
+                href={row.address}
+                target="_blank"
+                rel="noreferrer"
+                style={{ color: "var(--primary)", textDecoration: "underline" }}
+              >
+                {row.address}
+              </a>
             ),
           },
         ]}
