@@ -21,6 +21,7 @@ export async function formatPublicStudent(student) {
     contact: student.contact,
     universityId: Number(student.universityId),
     university: university?.name || 'Unknown',
+    department: student.department,
     gpa: Number(student.gpa),
     profilePic: student.profilePic
   };
@@ -36,7 +37,7 @@ export function formatPublicInstructor(instructor) {
     lname: instructor.lname,
     email: instructor.email,
     contact: instructor.contact,
-    department: instructor.department,
+    departments: Array.isArray(instructor.departments) ? instructor.departments : [],
     profilePic: instructor.profilePic
   };
 }

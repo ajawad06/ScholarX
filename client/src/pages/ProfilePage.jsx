@@ -9,13 +9,133 @@ import {
   Check,
   X,
   Building2,
+  KeyRound,
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { api } from "../api.js";
+import { DEPARTMENTS } from "../constants.js";
+
+const CHANGE_PASSWORD_ENDPOINTS = {
+  student: "/students/me/change-password",
+  instructor: "/instructors/me/change-password",
+  admin: "/admin/me/change-password",
+};
+
+function ChangePasswordCard({ role }) {
+  const [form, setForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setMessage(null);
+    setError(null);
+
+    if (form.newPassword !== form.confirmPassword) {
+      setError("New password and confirmation do not match.");
+      return;
+    }
+    if (form.newPassword.length < 6) {
+      setError("New password must be at least 6 characters.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await api(CHANGE_PASSWORD_ENDPOINTS[role], {
+        method: "POST",
+        body: JSON.stringify({
+          currentPassword: form.currentPassword,
+          newPassword: form.newPassword,
+        }),
+      });
+      setMessage(res.message || "Password updated successfully.");
+      setForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div
+      className="form-card"
+      style={{ maxWidth: "100%", width: "100%", marginTop: "24px" }}
+    >
+      <h2
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          marginBottom: "16px",
+        }}
+      >
+        <KeyRound size={22} /> Change Password
+      </h2>
+      {message && <p className="alert success">{message}</p>}
+      {error && <p className="alert error">{error}</p>}
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr 1fr",
+          gap: "16px",
+          alignItems: "end",
+        }}
+      >
+        <label className="profile-item">
+          <span>Current Password</span>
+          <input
+            type="password"
+            value={form.currentPassword}
+            onChange={(e) =>
+              setForm({ ...form, currentPassword: e.target.value })
+            }
+            required
+          />
+        </label>
+        <label className="profile-item">
+          <span>New Password</span>
+          <input
+            type="password"
+            value={form.newPassword}
+            onChange={(e) => setForm({ ...form, newPassword: e.target.value })}
+            required
+          />
+        </label>
+        <label className="profile-item">
+          <span>Confirm New Password</span>
+          <input
+            type="password"
+            value={form.confirmPassword}
+            onChange={(e) =>
+              setForm({ ...form, confirmPassword: e.target.value })
+            }
+            required
+          />
+        </label>
+        <button
+          className="button primary"
+          type="submit"
+          disabled={loading}
+          style={{ gridColumn: "1 / -1", width: "fit-content" }}
+        >
+          <KeyRound size={16} /> {loading ? "Updating..." : "Update Password"}
+        </button>
+      </form>
+    </div>
+  );
+}
 
 export function ProfilePage() {
-  const { user, role, setUser } = useAuth();
+  const { user, role, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState({});
   const [loading, setLoading] = useState(false);
@@ -30,7 +150,7 @@ export function ProfilePage() {
             mname: user.mname || "",
             lname: user.lname || "",
             contact: user.contact || "",
-            department: user.department || "",
+            departments: user.departments || [],
           }
         : {
             name: user.name || "",
@@ -43,7 +163,26 @@ export function ProfilePage() {
     setIsEditing(true);
   };
 
+  const toggleDepartment = (dept) => {
+    setForm((prev) => {
+      const current = prev.departments || [];
+      return {
+        ...prev,
+        departments: current.includes(dept)
+          ? current.filter((d) => d !== dept)
+          : [...current, dept],
+      };
+    });
+  };
+
   const handleSave = async () => {
+    if (
+      role === "instructor" &&
+      (!form.departments || form.departments.length === 0)
+    ) {
+      alert("Please select at least one department.");
+      return;
+    }
     setLoading(true);
     try {
       const endpoint =
@@ -52,7 +191,7 @@ export function ProfilePage() {
         method: "PATCH",
         body: JSON.stringify(form),
       });
-      setUser(role === "instructor" ? res.instructor : res.student);
+      updateUser(role === "instructor" ? res.instructor : res.student);
       setIsEditing(false);
     } catch (err) {
       alert(err.message);
@@ -60,6 +199,8 @@ export function ProfilePage() {
       setLoading(false);
     }
   };
+
+  const canEditProfile = role === "student" || role === "instructor";
 
   return (
     <section className="page medium">
@@ -81,33 +222,34 @@ export function ProfilePage() {
                 marginBottom: "4px",
               }}
             >
-              <User size={32} /> {user.name}'s Profile
+              <User size={32} /> {user.name}&apos;s Profile
             </h1>
             <p className="muted" style={{ textTransform: "capitalize" }}>
               Role: {role}
             </p>
           </div>
-          {!isEditing ? (
-            <button className="button ghost" onClick={handleEdit}>
-              <Edit2 size={16} /> Edit Profile
-            </button>
-          ) : (
-            <div style={{ display: "flex", gap: "8px" }}>
-              <button
-                className="button primary"
-                onClick={handleSave}
-                disabled={loading}
-              >
-                <Check size={16} /> {loading ? "Saving..." : "Save"}
+          {canEditProfile &&
+            (!isEditing ? (
+              <button className="button ghost" onClick={handleEdit}>
+                <Edit2 size={16} /> Edit Profile
               </button>
-              <button
-                className="button ghost"
-                onClick={() => setIsEditing(false)}
-              >
-                <X size={16} /> Cancel
-              </button>
-            </div>
-          )}
+            ) : (
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button
+                  className="button primary"
+                  onClick={handleSave}
+                  disabled={loading}
+                >
+                  <Check size={16} /> {loading ? "Saving..." : "Save"}
+                </button>
+                <button
+                  className="button ghost"
+                  onClick={() => setIsEditing(false)}
+                >
+                  <X size={16} /> Cancel
+                </button>
+              </div>
+            ))}
         </div>
 
         <div
@@ -117,7 +259,7 @@ export function ProfilePage() {
             gap: "32px",
           }}
         >
-          {role === "student" ? (
+          {role === "student" && (
             <>
               <div className="profile-item">
                 <label>
@@ -208,12 +350,25 @@ export function ProfilePage() {
               </div>
               <div className="profile-item">
                 <label>
+                  <Building2 size={16} /> Department
+                </label>
+                <p>
+                  {user.department || "Not set"}{" "}
+                  <span style={{ fontSize: "11px", color: "#94a3b8" }}>
+                    (Fixed)
+                  </span>
+                </p>
+              </div>
+              <div className="profile-item">
+                <label>
                   <Building2 size={16} /> University
                 </label>
                 <p>{user.university || "NUST"}</p>
               </div>
             </>
-          ) : (
+          )}
+
+          {role === "instructor" && (
             <>
               <div className="profile-item">
                 <label>
@@ -286,19 +441,46 @@ export function ProfilePage() {
                   <p>{user.contact || "Not set"}</p>
                 )}
               </div>
-              <div className="profile-item">
+              <div
+                className="profile-item"
+                style={{ gridColumn: isEditing ? "1 / -1" : "auto" }}
+              >
                 <label>
-                  <Building2 size={16} /> Department
+                  <Building2 size={16} /> Departments
                 </label>
                 {isEditing ? (
-                  <input
-                    value={form.department}
-                    onChange={(e) =>
-                      setForm({ ...form, department: e.target.value })
-                    }
-                  />
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr 1fr",
+                      gap: "8px",
+                    }}
+                  >
+                    {DEPARTMENTS.map((dept) => (
+                      <label
+                        key={dept}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          fontSize: "13px",
+                          fontWeight: "500",
+                          color: "#0f172a",
+                          margin: 0,
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={(form.departments || []).includes(dept)}
+                          onChange={() => toggleDepartment(dept)}
+                          style={{ width: "auto" }}
+                        />
+                        {dept}
+                      </label>
+                    ))}
+                  </div>
                 ) : (
-                  <p>{user.department || "Not set"}</p>
+                  <p>{(user.departments || []).join(", ") || "Not set"}</p>
                 )}
               </div>
               <div className="profile-item">
@@ -309,14 +491,40 @@ export function ProfilePage() {
               </div>
             </>
           )}
+
+          {role === "admin" && (
+            <>
+              <div className="profile-item">
+                <label>
+                  <User size={16} /> Name
+                </label>
+                <p>{user.name}</p>
+              </div>
+              <div className="profile-item">
+                <label>
+                  <Mail size={16} /> Email
+                </label>
+                <p>{user.email}</p>
+              </div>
+            </>
+          )}
         </div>
       </div>
+
+      <ChangePasswordCard role={role} />
 
       <style>{`
         .profile-item label {
           display: flex;
           align-items: center;
           gap: 8px;
+          color: #64748b;
+          font-size: 13px;
+          font-weight: 600;
+          margin-bottom: 8px;
+        }
+        .profile-item > span {
+          display: block;
           color: #64748b;
           font-size: 13px;
           font-weight: 600;

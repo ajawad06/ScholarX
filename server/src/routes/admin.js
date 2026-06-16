@@ -7,11 +7,13 @@ import { Instructor } from "../models/Instructor.js";
 import { University } from "../models/University.js";
 import { ExchangeApplication } from "../models/ExchangeApplication.js";
 import { ScholarshipApplication } from "../models/ScholarshipApplication.js";
+import { Admin } from "../models/Admin.js";
 import {
   getNextSequenceValue,
   formatPublicStudent,
   formatPublicInstructor,
 } from "../utils/helpers.js";
+import { isValidDepartment, sanitizeDepartments } from "../utils/departments.js";
 import { asyncRoute } from "../utils/asyncRoute.js";
 import { requireAuth } from "../middleware/auth.js";
 
@@ -99,6 +101,12 @@ adminRouter.delete(
 adminRouter.post(
   "/students",
   asyncRoute(async (req, res) => {
+    if (!isValidDepartment(req.body.department)) {
+      return res
+        .status(400)
+        .json({ message: "Please select a valid department." });
+    }
+
     const id = await getNextSequenceValue("students");
     const student = await Student.create({
       id,
@@ -108,6 +116,7 @@ adminRouter.post(
       nationality: req.body.nationality,
       contact: req.body.contact,
       universityId: Number(req.body.universityId),
+      department: req.body.department,
       gpa: Number(req.body.gpa),
       password: await bcrypt.hash(req.body.password || "student123", 10),
       profilePic: null,
@@ -133,6 +142,13 @@ adminRouter.delete(
 adminRouter.post(
   "/instructors",
   asyncRoute(async (req, res) => {
+    const departments = sanitizeDepartments(req.body.departments);
+    if (departments.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Select at least one valid department." });
+    }
+
     const id = await getNextSequenceValue("instructors");
     const instructor = await Instructor.create({
       id,
@@ -142,7 +158,7 @@ adminRouter.post(
       lname: req.body.lname,
       email: String(req.body.email || "").toLowerCase(),
       contact: req.body.contact,
-      department: req.body.department,
+      departments,
       password: await bcrypt.hash(req.body.password || "instructor123", 10),
       profilePic: null,
     });
@@ -209,5 +225,35 @@ adminRouter.post(
         .status(500)
         .json({ message: "Failed to verify university: " + error.message });
     }
+  }),
+);
+
+adminRouter.post(
+  "/me/change-password",
+  asyncRoute(async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "Current and new password are required." });
+    }
+    if (String(newPassword).length < 6) {
+      return res
+        .status(400)
+        .json({ message: "New password must be at least 6 characters." });
+    }
+
+    const admin = await Admin.findOne({ id: req.user.id });
+    if (!admin) return res.status(404).json({ message: "Admin not found." });
+
+    if (!(await bcrypt.compare(currentPassword, admin.password))) {
+      return res
+        .status(401)
+        .json({ message: "Current password is incorrect." });
+    }
+
+    admin.password = await bcrypt.hash(newPassword, 10);
+    await admin.save();
+    res.json({ message: "Password updated successfully." });
   }),
 );

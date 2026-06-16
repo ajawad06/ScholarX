@@ -2,6 +2,7 @@ import { Save } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api.js";
+import { DEPARTMENTS } from "../constants.js";
 
 const emptyForm = {
   name: "",
@@ -11,6 +12,7 @@ const emptyForm = {
   nationality: "",
   contact: "",
   universityId: "1",
+  department: "",
   gpa: "",
 };
 
@@ -88,6 +90,23 @@ export function StudentRegister() {
             onChange={(e) => setForm({ ...form, contact: e.target.value })}
             required
           />
+        </label>
+        <label>
+          Department
+          <select
+            value={form.department}
+            onChange={(e) => setForm({ ...form, department: e.target.value })}
+            required
+          >
+            <option value="" disabled>
+              Select your department
+            </option>
+            {DEPARTMENTS.map((dept) => (
+              <option key={dept} value={dept}>
+                {dept}
+              </option>
+            ))}
+          </select>
         </label>
         <label>
           GPA

@@ -9,6 +9,7 @@ import { Scholarship } from "../models/Scholarship.js";
 import { ExchangeApplication } from "../models/ExchangeApplication.js";
 import { ScholarshipApplication } from "../models/ScholarshipApplication.js";
 import { getNextSequenceValue, formatPublicStudent } from "../utils/helpers.js";
+import { isValidDepartment } from "../utils/departments.js";
 import { asyncRoute } from "../utils/asyncRoute.js";
 
 export const studentRouter = Router();
@@ -26,6 +27,12 @@ studentRouter.post(
         .json({ message: "A student with this email already exists." });
     }
 
+    if (!isValidDepartment(req.body.department)) {
+      return res
+        .status(400)
+        .json({ message: "Please select a valid department." });
+    }
+
     const id = await getNextSequenceValue("students");
     const student = await Student.create({
       id,
@@ -35,6 +42,7 @@ studentRouter.post(
       nationality: req.body.nationality,
       contact: req.body.contact,
       universityId: 1, // Fixed to NUST (id: 1)
+      department: req.body.department,
       gpa: Number(req.body.gpa),
       password: await bcrypt.hash(req.body.password || "", 10),
       profilePic: null,
@@ -188,9 +196,50 @@ studentRouter.patch(
       }
     });
 
+    if (req.body.department !== undefined) {
+      if (!isValidDepartment(req.body.department)) {
+        return res
+          .status(400)
+          .json({ message: "Please select a valid department." });
+      }
+      student.department = req.body.department;
+    }
+
     await student.save();
     const formatted = await formatPublicStudent(student);
     res.json({ student: formatted });
+  }),
+);
+
+studentRouter.post(
+  "/me/change-password",
+  requireAuth("student"),
+  asyncRoute(async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "Current and new password are required." });
+    }
+    if (String(newPassword).length < 6) {
+      return res
+        .status(400)
+        .json({ message: "New password must be at least 6 characters." });
+    }
+
+    const student = await Student.findOne({ id: req.user.id });
+    if (!student)
+      return res.status(404).json({ message: "Student not found." });
+
+    if (!(await bcrypt.compare(currentPassword, student.password))) {
+      return res
+        .status(401)
+        .json({ message: "Current password is incorrect." });
+    }
+
+    student.password = await bcrypt.hash(newPassword, 10);
+    await student.save();
+    res.json({ message: "Password updated successfully." });
   }),
 );
 

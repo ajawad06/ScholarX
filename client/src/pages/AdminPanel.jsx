@@ -3,6 +3,7 @@ import { useState } from "react";
 import { api } from "../api.js";
 import { DataTable } from "../components/DataTable.jsx";
 import { useAsync } from "../hooks/useAsync.js";
+import { DEPARTMENTS } from "../constants.js";
 
 export function AdminPanel() {
   const { data, error, loading, setData } = useAsync(
@@ -33,6 +34,7 @@ export function AdminPanel() {
     nationality: "",
     contact: "",
     universityId: "",
+    department: "",
     gpa: "",
   });
   const [instructor, setInstructor] = useState({
@@ -42,9 +44,18 @@ export function AdminPanel() {
     email: "",
     password: "",
     contact: "",
-    department: "",
+    departments: [],
     universityId: "1",
   });
+
+  function toggleInstructorDepartment(dept) {
+    setInstructor((prev) => ({
+      ...prev,
+      departments: prev.departments.includes(dept)
+        ? prev.departments.filter((d) => d !== dept)
+        : [...prev.departments, dept],
+    }));
+  }
   const [newUniv, setNewUniv] = useState({
     name: "",
     city: "",
@@ -283,6 +294,10 @@ export function AdminPanel() {
               ...instructor,
               universityId: "1", // Fixed to NUST
             };
+            if (instructor.departments.length === 0) {
+              alert("Select at least one department for the instructor.");
+              return;
+            }
             create("/admin/instructors", payload, () =>
               setInstructor({
                 fname: "",
@@ -291,7 +306,7 @@ export function AdminPanel() {
                 email: "",
                 password: "",
                 contact: "",
-                department: "",
+                departments: [],
                 universityId: "1",
               }),
             );
@@ -347,14 +362,48 @@ export function AdminPanel() {
             }
             required
           />
-          <input
-            placeholder="Department"
-            value={instructor.department}
-            onChange={(e) =>
-              setInstructor({ ...instructor, department: e.target.value })
-            }
-            required
-          />
+          <fieldset
+            style={{
+              border: "1px solid #e2e8f0",
+              borderRadius: "8px",
+              padding: "12px",
+              margin: 0,
+            }}
+          >
+            <legend
+              style={{ fontSize: "13px", fontWeight: "600", padding: "0 6px" }}
+            >
+              Departments (select one or more)
+            </legend>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "6px",
+              }}
+            >
+              {DEPARTMENTS.map((dept) => (
+                <label
+                  key={dept}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    fontSize: "13px",
+                    fontWeight: "500",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={instructor.departments.includes(dept)}
+                    onChange={() => toggleInstructorDepartment(dept)}
+                    style={{ width: "auto" }}
+                  />
+                  {dept}
+                </label>
+              ))}
+            </div>
+          </fieldset>
           <button className="button primary" type="submit">
             <Plus size={18} /> Add Instructor
           </button>
@@ -435,7 +484,7 @@ export function AdminPanel() {
           { key: "id", label: "ID" },
           { key: "name", label: "Name" },
           { key: "email", label: "Email" },
-          { key: "university", label: "University" },
+          { key: "department", label: "Department" },
           { key: "gpa", label: "GPA" },
           {
             key: "action",
@@ -459,8 +508,11 @@ export function AdminPanel() {
           { key: "id", label: "ID" },
           { key: "name", label: "Name" },
           { key: "email", label: "Email" },
-          { key: "department", label: "Department" },
-          { key: "universityId", label: "University" },
+          {
+            key: "departments",
+            label: "Departments",
+            render: (row) => (row.departments || []).join(", ") || "—",
+          },
           { key: "contact", label: "Contact" },
           {
             key: "action",

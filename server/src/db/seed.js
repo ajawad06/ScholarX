@@ -328,6 +328,9 @@ export async function seedDatabase() {
     );
   }
 
+  // Remove legacy students created before the department field existed.
+  await Student.deleteMany({ department: { $exists: false } });
+
   const studentCount = await Student.countDocuments();
   if (studentCount === 0) {
     const studentPassword = await bcrypt.hash("student123", 10);
@@ -339,6 +342,7 @@ export async function seedDatabase() {
       nationality: "Pakistani",
       contact: "03239850976",
       universityId: 1,
+      department: "Computer Science",
       gpa: 3.4,
       password: studentPassword,
       profilePic: null,
@@ -349,6 +353,9 @@ export async function seedDatabase() {
       { upsert: true },
     );
   }
+
+  // Remove legacy instructors created before the departments array existed.
+  await Instructor.deleteMany({ departments: { $exists: false } });
 
   const instructorCount = await Instructor.countDocuments();
   if (instructorCount === 0) {
@@ -361,7 +368,11 @@ export async function seedDatabase() {
       lname: "Zafar",
       email: "naeem.zafar@nust.edu.pk",
       contact: "03001239876",
-      department: "AI & Data Science",
+      departments: [
+        "Computer Science",
+        "Data Science",
+        "Artificial Intelligence",
+      ],
       password: instructorPassword,
       profilePic: null,
     });

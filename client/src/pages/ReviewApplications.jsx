@@ -165,6 +165,7 @@ export function ReviewApplications() {
         empty="No pending exchange applications."
         columns={[
           { key: "studentName", label: "Student" },
+          { key: "department", label: "Department" },
           { key: "gpa", label: "GPA" },
           { key: "university", label: "University" },
           { key: "programName", label: "Program" },
@@ -191,6 +192,7 @@ export function ReviewApplications() {
         empty="No pending scholarship applications."
         columns={[
           { key: "studentName", label: "Student" },
+          { key: "department", label: "Department" },
           { key: "gpa", label: "GPA" },
           { key: "university", label: "University" },
           { key: "scholarshipName", label: "Scholarship" },

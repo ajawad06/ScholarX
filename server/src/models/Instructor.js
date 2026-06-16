@@ -9,7 +9,14 @@ const instructorSchema = new mongoose.Schema(
     lname: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     contact: { type: String, required: true, trim: true },
-    department: { type: String, required: true, trim: true },
+    departments: {
+      type: [String],
+      required: true,
+      validate: {
+        validator: (value) => Array.isArray(value) && value.length > 0,
+        message: 'An instructor must oversee at least one department.'
+      }
+    },
     password: { type: String, required: true },
     profilePic: { type: String, default: null }
   },

@@ -60,7 +60,7 @@ export function InstructorDashboard() {
         <div style={{ flexGrow: 1, minWidth: '200px' }}>
           <p className="eyebrow">Instructor Dashboard</p>
           <h1>Welcome, {user?.name}</h1>
-          <p className="muted" style={{ marginBottom: '16px' }}>{user?.department} · University ID {user?.universityId}</p>
+          <p className="muted" style={{ marginBottom: '16px' }}>{(user?.departments || []).join(', ') || 'No departments assigned'} · University ID {user?.universityId}</p>
           <Link className="button primary" to="/instructor/applications"><ClipboardList size={18} /> Review Applications</Link>
         </div>
       </div>
