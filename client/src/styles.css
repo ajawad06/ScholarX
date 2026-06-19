@@ -766,6 +766,7 @@ th {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  white-space: nowrap;
 }
 
 tr:last-child td {

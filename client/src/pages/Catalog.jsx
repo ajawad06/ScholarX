@@ -30,7 +30,13 @@ export function Catalog() {
           { key: "name", label: "Name" },
           { key: "duration", label: "Duration" },
           { key: "requirements", label: "Requirements" },
-          { key: "startDate", label: "Start Date" },
+          {
+            key: "startDate",
+            label: "Start Date",
+            render: (row) => (
+              <span style={{ whiteSpace: "nowrap" }}>{row.startDate}</span>
+            ),
+          },
           {
             key: "universityId",
             label: "University",
@@ -52,7 +58,13 @@ export function Catalog() {
             render: (row) =>
               row.amount ? `$${Number(row.amount).toLocaleString()}` : "---",
           },
-          { key: "deadline", label: "Deadline" },
+          {
+            key: "deadline",
+            label: "Deadline",
+            render: (row) => (
+              <span style={{ whiteSpace: "nowrap" }}>{row.deadline}</span>
+            ),
+          },
         ]}
       />
     </section>
