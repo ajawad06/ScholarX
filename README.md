@@ -64,3 +64,4 @@ npm run dev
 - Student: `student@nust.edu.pk` / `student123`
 - Instructor: `naeem.zafar@nust.edu.pk` / `instructor123`
 - Admin: `admin@nust.edu.pk` / `admin123`
+

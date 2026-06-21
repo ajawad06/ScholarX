@@ -14,6 +14,7 @@ import {
   formatPublicInstructor,
 } from "../utils/helpers.js";
 import { isValidDepartment, sanitizeDepartments } from "../utils/departments.js";
+import { purgeExpiredOpportunities } from "../utils/purgeExpired.js";
 import { asyncRoute } from "../utils/asyncRoute.js";
 import { requireAuth } from "../middleware/auth.js";
 
@@ -24,6 +25,8 @@ adminRouter.use(requireAuth("admin"));
 adminRouter.get(
   "/overview",
   asyncRoute(async (req, res) => {
+    await purgeExpiredOpportunities();
+
     const [programs, scholarships, students, instructors, universities] =
       await Promise.all([
         Program.find(),
