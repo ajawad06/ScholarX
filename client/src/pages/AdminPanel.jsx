@@ -77,8 +77,12 @@ export function AdminPanel() {
   }
 
   async function remove(path) {
-    await api(path, { method: "DELETE" });
-    await refresh();
+    try {
+      await api(path, { method: "DELETE" });
+      await refresh();
+    } catch (err) {
+      alert(err.message);
+    }
   }
 
   return (
@@ -482,6 +486,32 @@ export function AdminPanel() {
                 {row.address}
               </a>
             ),
+          },
+          {
+            key: "action",
+            label: "Action",
+            render: (row) =>
+              row.id === 1 ? (
+                <span className="muted" style={{ fontSize: "12px" }}>
+                  Home university
+                </span>
+              ) : (
+                <button
+                  className="mini reject"
+                  type="button"
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        `Delete "${row.name}"? This also deletes its exchange programs and all applications to them.`,
+                      )
+                    ) {
+                      remove(`/admin/universities/${row.id}`);
+                    }
+                  }}
+                >
+                  <Trash2 size={16} /> Delete
+                </button>
+              ),
           },
         ]}
       />

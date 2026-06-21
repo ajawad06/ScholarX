@@ -231,6 +231,33 @@ adminRouter.post(
   }),
 );
 
+adminRouter.delete(
+  "/universities/:id",
+  asyncRoute(async (req, res) => {
+    const id = Number(req.params.id);
+
+    // NUST is the home university every student/instructor belongs to.
+    if (id === 1) {
+      return res
+        .status(400)
+        .json({ message: "NUST is the home university and cannot be deleted." });
+    }
+
+    // Cascade: remove the university's programs and any exchange applications
+    // to those programs, then the university itself.
+    const programs = await Program.find({ universityId: id });
+    const programIds = programs.map((program) => program.id);
+
+    await Promise.all([
+      ExchangeApplication.deleteMany({ programId: { $in: programIds } }),
+      Program.deleteMany({ universityId: id }),
+      University.deleteOne({ id }),
+    ]);
+
+    res.status(204).end();
+  }),
+);
+
 adminRouter.post(
   "/me/change-password",
   asyncRoute(async (req, res) => {
